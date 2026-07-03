@@ -1,0 +1,52 @@
+{
+  "name": "civic-sentry",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "seed": "node scripts/seed-all.js",
+    "seed:polling-units": "node scripts/seed-polling-units.js",
+    "seed:acled": "node scripts/seed-acled-incidents.js",
+    "seed:warscope": "node scripts/seed-warscope-events.js",
+    "seed:war-tracker": "node scripts/seed-war-tracker-events.js",
+    "seed:gdelt": "node scripts/seed-gdelt-news.js",
+    "seed:newsmcp": "node scripts/seed-newsmcp-news.js",
+    "seed:election": "node scripts/seed-election-data.js",
+    "seed:nigerian-data": "node scripts/seed-nigerian-data.js",
+    "seed:satellite": "node scripts/seed-satellite-captures.js",
+    "seed:risk-scores": "node scripts/compute-risk-scores.js",
+    "seed:reconcile-risk": "node scripts/reconcile-risk-scores.js",
+    "audit:mixing": "node scripts/audit-mixing.js",
+    "audit:geospatial": "node scripts/audit-geospatial.js",
+    "audit:overlaps": "node scripts/audit-overlaps.js",
+    "audit:all": "node scripts/audit-mixing.js && node scripts/audit-geospatial.js && node scripts/audit-overlaps.js"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.12.0",
+    "@supabase/supabase-js": "^2.39.0",
+    "dotenv": "^16.3.1",
+    "leaflet": "^1.9.4",
+    "leaflet.markercluster": "^1.5.3",
+    "next": "16.2.10",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-leaflet": "^5.0.0",
+    "react-leaflet-markercluster": "^5.0.0-rc.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/leaflet": "^1.9.21",
+    "@types/leaflet.markercluster": "^1.5.6",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.10",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

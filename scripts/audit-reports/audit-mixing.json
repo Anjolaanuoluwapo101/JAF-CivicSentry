@@ -1,0 +1,212 @@
+{
+  "tables": {
+    "polling_units": 33363,
+    "acled_incidents": 4208,
+    "election_results": 18,
+    "satellite_captures": 0,
+    "news_signals": 86,
+    "incident_reports": 0,
+    "subscriptions": 0,
+    "health_facilities": 1501,
+    "power_outages": 0,
+    "population_density": 33363,
+    "economic_indicators": 0
+  },
+  "orphanedFKs": {
+    "acled_incidents.polling_unit_id": 0,
+    "election_results.polling_unit_id": 0,
+    "satellite_captures.polling_unit_id": 0,
+    "news_signals.polling_unit_id": 0,
+    "population_density.polling_unit_id": 0
+  },
+  "sourceMixing": {
+    "acled_incidents": {
+      "ACLED (HDX)": 4208
+    },
+    "news_signals": {
+      "punchng.com": 3,
+      "The Punch": 69,
+      "Vanguard": 11,
+      "opinionnigeria.com": 1,
+      "naija247news.com": 1,
+      "dailytrust.com": 1
+    },
+    "election_results": {
+      "1999|state_level_only": 6,
+      "2003|state_level_only": 6,
+      "2011|state_level_only": 6
+    }
+  },
+  "nulls": {
+    "polling_units.name": 0,
+    "polling_units.lat": 0,
+    "polling_units.lng": 0,
+    "election_results.election_year": 0,
+    "election_results.election_type": 0,
+    "health_facilities.name": 0,
+    "health_facilities.lat": 0,
+    "health_facilities.lng": 0,
+    "economic_indicators.indicator_type": 0
+  },
+  "duplicates": {},
+  "dateOutliers": {
+    "acled_incidents.event_date": {
+      "before": 0,
+      "after": 0
+    },
+    "election_results.election_year": {
+      "before": 0,
+      "after": 0
+    }
+  },
+  "summary": {
+    "passed": 30,
+    "warning": 5,
+    "critical": 0,
+    "passedDetails": [
+      {
+        "check": "polling_units row count",
+        "detail": "33,363 rows"
+      },
+      {
+        "check": "acled_incidents row count",
+        "detail": "4,208 rows"
+      },
+      {
+        "check": "election_results row count",
+        "detail": "18 rows"
+      },
+      {
+        "check": "news_signals row count",
+        "detail": "86 rows"
+      },
+      {
+        "check": "health_facilities row count",
+        "detail": "1,501 rows"
+      },
+      {
+        "check": "population_density row count",
+        "detail": "33,363 rows"
+      },
+      {
+        "check": "acled_incidents sources",
+        "detail": "1 source(s): ACLED (HDX)"
+      },
+      {
+        "check": "acled_incidents source validity",
+        "detail": "All sources match expected values"
+      },
+      {
+        "check": "news_signals sources",
+        "detail": "6 source domain(s)"
+      },
+      {
+        "check": "election_results state_level_only no PU",
+        "detail": "All state_level_only records have null polling_unit_id"
+      },
+      {
+        "check": "election_results complete quality with PU",
+        "detail": "All complete records have a polling_unit_id"
+      },
+      {
+        "check": "election_results data_quality values",
+        "detail": "All values in expected set: complete, partial, state_level_only"
+      },
+      {
+        "check": "acled_incidents.polling_unit_id orphaned FKs",
+        "detail": "0 of 4208 FK values orphaned"
+      },
+      {
+        "check": "election_results.polling_unit_id orphaned FKs",
+        "detail": "No non-null FK values"
+      },
+      {
+        "check": "satellite_captures.polling_unit_id orphaned FKs",
+        "detail": "No non-null FK values"
+      },
+      {
+        "check": "news_signals.polling_unit_id orphaned FKs",
+        "detail": "0 of 5 FK values orphaned"
+      },
+      {
+        "check": "population_density.polling_unit_id orphaned FKs",
+        "detail": "0 of 33363 FK values orphaned"
+      },
+      {
+        "check": "polling_units.name NULL",
+        "detail": "No NULL values"
+      },
+      {
+        "check": "polling_units.lat NULL",
+        "detail": "No NULL values"
+      },
+      {
+        "check": "polling_units.lng NULL",
+        "detail": "No NULL values"
+      },
+      {
+        "check": "election_results.election_year NULL",
+        "detail": "No NULL values"
+      },
+      {
+        "check": "election_results.election_type NULL",
+        "detail": "No NULL values"
+      },
+      {
+        "check": "health_facilities.name NULL",
+        "detail": "No NULL values"
+      },
+      {
+        "check": "health_facilities.lat NULL",
+        "detail": "No NULL values"
+      },
+      {
+        "check": "health_facilities.lng NULL",
+        "detail": "No NULL values"
+      },
+      {
+        "check": "economic_indicators.indicator_type NULL",
+        "detail": "No NULL values"
+      },
+      {
+        "check": "polling_units.id uniqueness",
+        "detail": "No duplicate polling_unit ID found"
+      },
+      {
+        "check": "news_signals.url uniqueness",
+        "detail": "No duplicate news URL found"
+      },
+      {
+        "check": "acled_incidents event_date range",
+        "detail": "All between 1997-01-01 and 2026-12-31"
+      },
+      {
+        "check": "election_results election_year range",
+        "detail": "All between 1999 and 2023"
+      }
+    ],
+    "warningDetails": [
+      {
+        "check": "satellite_captures row count",
+        "detail": "Table is empty"
+      },
+      {
+        "check": "incident_reports row count",
+        "detail": "Table is empty"
+      },
+      {
+        "check": "subscriptions row count",
+        "detail": "Table is empty"
+      },
+      {
+        "check": "power_outages row count",
+        "detail": "Table is empty"
+      },
+      {
+        "check": "economic_indicators row count",
+        "detail": "Table is empty"
+      }
+    ],
+    "criticalDetails": []
+  }
+}

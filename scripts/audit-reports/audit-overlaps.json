@@ -1,0 +1,136 @@
+{
+  "populationDensity": {
+    "duplicatePUs": 0,
+    "duplicateDetails": [],
+    "sourceDistribution": {
+      "WorldPop/NPopC 2006": 33363
+    }
+  },
+  "satelliteCaptures": {
+    "total": 0,
+    "duplicateHashes": 0,
+    "duplicatePUDate": 0,
+    "nullPU": 0
+  },
+  "electionConflicts": {
+    "total": 18,
+    "conflicts": 0
+  },
+  "riskScoreMismatches": {
+    "total": 0,
+    "falseHigh": 0,
+    "falseLow": 0,
+    "details": []
+  },
+  "missingStateInfo": {
+    "polling_units.state": 0,
+    "news_signals.state": 0,
+    "election_results.state": 0,
+    "health_facilities.state": 0,
+    "economic_indicators.state": 0
+  },
+  "states_polling_units": [
+    "EKITI",
+    "LAGOS",
+    "OGUN",
+    "ONDO",
+    "OSUN",
+    "OYO"
+  ],
+  "states_news_signals": [
+    "EKITI",
+    "LAGOS",
+    "OGUN",
+    "ONDO",
+    "OSUN",
+    "OYO"
+  ],
+  "states_election_results": [
+    "EKITI",
+    "LAGOS",
+    "OGUN",
+    "ONDO",
+    "OSUN",
+    "OYO"
+  ],
+  "states_health_facilities": [
+    "LAGOS",
+    "OGUN",
+    "ONDO",
+    "OSUN",
+    "OYO"
+  ],
+  "summary": {
+    "passed": 16,
+    "warning": 0,
+    "critical": 0,
+    "passedDetails": [
+      {
+        "check": "population_density duplicates",
+        "detail": "No PU has multiple density records"
+      },
+      {
+        "check": "population_density single source",
+        "detail": "Only one source type in table"
+      },
+      {
+        "check": "satellite captures SHA-256 uniqueness",
+        "detail": "No duplicate hashes"
+      },
+      {
+        "check": "satellite captures PU+date uniqueness",
+        "detail": "No duplicate PU+date combinations"
+      },
+      {
+        "check": "satellite captures PU linkage",
+        "detail": "All captures linked to a PU"
+      },
+      {
+        "check": "election results conflicts",
+        "detail": "No duplicate PU+year combinations"
+      },
+      {
+        "check": "risk score consistency",
+        "detail": "All PU risk scores match incident counts"
+      },
+      {
+        "check": "polling_units state completeness",
+        "detail": "All records have state info"
+      },
+      {
+        "check": "news_signals state completeness",
+        "detail": "All records have state info"
+      },
+      {
+        "check": "election_results state completeness",
+        "detail": "All records have state info"
+      },
+      {
+        "check": "health_facilities state completeness",
+        "detail": "All records have state info"
+      },
+      {
+        "check": "economic_indicators state completeness",
+        "detail": "All records have state info"
+      },
+      {
+        "check": "polling_units state values",
+        "detail": "All states in expected set: LAGOS, OGUN, OYO, OSUN, ONDO, EKITI"
+      },
+      {
+        "check": "news_signals state values",
+        "detail": "All states in expected set: LAGOS, OGUN, OYO, OSUN, ONDO, EKITI"
+      },
+      {
+        "check": "election_results state values",
+        "detail": "All states in expected set: LAGOS, OGUN, OYO, OSUN, ONDO, EKITI"
+      },
+      {
+        "check": "health_facilities state values",
+        "detail": "All states in expected set: LAGOS, OGUN, OYO, OSUN, ONDO, EKITI"
+      }
+    ],
+    "warningDetails": [],
+    "criticalDetails": []
+  }
+}

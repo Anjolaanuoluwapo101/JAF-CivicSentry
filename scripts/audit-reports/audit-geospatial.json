@@ -1,0 +1,101 @@
+{
+  "coords_polling_units": {
+    "total": 33363,
+    "valid": 33363,
+    "invalid": 0,
+    "zeroCoords": 0,
+    "nullCoord": 0
+  },
+  "coords_health_facilities": {
+    "total": 1501,
+    "valid": 1501,
+    "invalid": 0,
+    "zeroCoords": 0,
+    "nullCoord": 0
+  },
+  "coords_power_outages": {
+    "total": 0,
+    "valid": 0,
+    "invalid": 0,
+    "zeroCoords": 0,
+    "nullCoord": 0
+  },
+  "puCoverage": {
+    "zero": 29155,
+    "one": 4208,
+    "twoPlus": 0,
+    "threePlus": 0
+  },
+  "crossSourceOverlap": {
+    "acledOnly": 4208,
+    "warscopeOnly": 0,
+    "warTrackerOnly": 0,
+    "acledAndWarscope": 0,
+    "acledAndWarTracker": 0,
+    "warscopeAndWarTracker": 0,
+    "allThree": 0
+  },
+  "distanceStats": {
+    "linked": 4208,
+    "unlinked": 0
+  },
+  "stateCoverage": {
+    "LAGOS": {
+      "total": 12719,
+      "withIncidents": 1493
+    },
+    "OSUN": {
+      "total": 3204,
+      "withIncidents": 457
+    },
+    "OYO": {
+      "total": 5780,
+      "withIncidents": 400
+    },
+    "ONDO": {
+      "total": 2565,
+      "withIncidents": 715
+    },
+    "OGUN": {
+      "total": 5562,
+      "withIncidents": 744
+    },
+    "EKITI": {
+      "total": 3533,
+      "withIncidents": 399
+    }
+  },
+  "summary": {
+    "passed": 6,
+    "warning": 0,
+    "critical": 0,
+    "passedDetails": [
+      {
+        "check": "polling_units coordinates within Nigeria",
+        "detail": "All 33363 records within bounds"
+      },
+      {
+        "check": "health_facilities coordinates within Nigeria",
+        "detail": "All 1501 records within bounds"
+      },
+      {
+        "check": "PU incident coverage",
+        "detail": "4208 PUs have at least 1 incident"
+      },
+      {
+        "check": "cross-source overlap",
+        "detail": "4208 PUs covered by at least one source"
+      },
+      {
+        "check": "distance analysis",
+        "detail": "Analyzing 4208 incidents"
+      },
+      {
+        "check": "incident-to-PU linking",
+        "detail": "All incidents linked to a polling unit"
+      }
+    ],
+    "warningDetails": [],
+    "criticalDetails": []
+  }
+}
