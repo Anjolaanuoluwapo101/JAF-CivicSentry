@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
+import dynamic from "next/dynamic"
 import { useAuth } from "@/lib/auth"
 import {
   PollingUnit,
@@ -15,8 +16,16 @@ import {
 } from "@/lib/queries"
 import Navbar from "@/components/Navbar"
 import StatsSidebar from "@/components/StatsSidebar"
-import DashboardMap from "@/components/DashboardMap"
 import DetailPanel from "@/components/DetailPanel"
+
+const DashboardMap = dynamic(() => import("@/components/DashboardMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="flex-1 bg-gray-100 flex items-center justify-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500" />
+    </div>
+  ),
+})
 
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth()
@@ -138,13 +147,13 @@ export default function DashboardPage() {
               onStateChange={setSelectedState}
             />
           )}
+
+          {/* Detail bottom sheet — scoped to map area */}
+          {selectedPU && (
+            <DetailPanel pu={selectedPU} onClose={() => setSelectedPU(null)} />
+          )}
         </div>
       </div>
-
-      {/* Detail bottom sheet */}
-      {selectedPU && (
-        <DetailPanel pu={selectedPU} onClose={() => setSelectedPU(null)} />
-      )}
     </div>
   )
 }

@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react"
 import { User, Session } from "@supabase/supabase-js"
 import { supabase } from "./supabase"
+import { registerServiceWorker } from "./register-sw"
 
 interface AuthContextType {
   user: User | null
@@ -29,6 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     let mounted = true
+    registerServiceWorker()
 
     supabase.auth
       .getSession()

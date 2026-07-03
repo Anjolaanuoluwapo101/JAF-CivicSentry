@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useMemo, useCallback, useRef, forwardRef, useImperativeHandle } from "react"
+import React, { useEffect, useState, useMemo, useCallback, useRef, forwardRef, useImperativeHandle } from "react"
 import {
   MapContainer,
   TileLayer,
@@ -25,9 +25,9 @@ const RISK_COLORS: Record<string, string> = {
 }
 
 const RISK_RADIUS: Record<string, number> = {
-  high: 7,
-  medium: 6,
-  low: 5,
+  high: 9,
+  medium: 8,
+  low: 7,
 }
 
 const SW_CENTER: [number, number] = [7.5, 4.0]
@@ -295,19 +295,32 @@ export default function DashboardMap({
           const capture = captureMap.get(pu.id)
 
           return (
-            <CircleMarker
-              key={pu.id}
-              center={[pu.lat, pu.lng]}
-              radius={getMarkerRadius(pu)}
-              fillColor={getMarkerColor(pu)}
-              color={getMarkerColor(pu)}
-              weight={1}
-              opacity={0.85}
-              fillOpacity={0.75}
-              eventHandlers={{
-                click: () => onSelectPU?.(pu),
-              }}
-            >
+            <React.Fragment key={pu.id}>
+              {/* Invisible hit area — larger radius for easy tapping */}
+              <CircleMarker
+                center={[pu.lat, pu.lng]}
+                radius={14}
+                fillColor="transparent"
+                color="transparent"
+                weight={0}
+                fillOpacity={0}
+                eventHandlers={{
+                  click: () => onSelectPU?.(pu),
+                }}
+              />
+              {/* Visible marker */}
+              <CircleMarker
+                center={[pu.lat, pu.lng]}
+                radius={getMarkerRadius(pu)}
+                fillColor={getMarkerColor(pu)}
+                color={getMarkerColor(pu)}
+                weight={1}
+                opacity={0.85}
+                fillOpacity={0.75}
+                eventHandlers={{
+                  click: () => onSelectPU?.(pu),
+                }}
+              >
               <Popup>
                 <div className="min-w-[200px]">
                   <h3 className="font-semibold text-gray-900 text-sm">
@@ -382,6 +395,7 @@ export default function DashboardMap({
                 </div>
               </Popup>
             </CircleMarker>
+            </React.Fragment>
           )
         })}
       </MapContainer>

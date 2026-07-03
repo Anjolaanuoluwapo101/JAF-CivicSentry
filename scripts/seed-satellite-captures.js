@@ -8,6 +8,38 @@ const SENTINEL_CLIENT_SECRET = process.env.SENTINEL_HUB_CLIENT_SECRET
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
+function haversineDistance(lat1, lng1, lat2, lng2) {
+  const R = 6371
+  const dLat = ((lat2 - lat1) * Math.PI) / 180
+  const dLng = ((lng2 - lng1) * Math.PI) / 180
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) *
+    Math.sin(dLng / 2) * Math.sin(dLng / 2)
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+}
+
+function findNearestPollingUnit(lat, lng, pollingUnits, maxDist = 5) {
+  let nearest = null
+  let minDist = Infinity
+  for (const pu of pollingUnits) {
+    const dist = haversineDistance(lat, lng, pu.lat, pu.lng)
+    if (dist < minDist && dist <= maxDist) {
+      minDist = dist
+      nearest = pu
+    }
+  }
+  return nearest
+}
+
+function toODataPolygon(lng, lat, delta = 0.05) {
+  const minLng = lng - delta
+  const maxLng = lng + delta
+  const minLat = lat - delta
+  const maxLat = lat + delta
+  return `POLYGON((${minLng} ${minLat},${maxLng} ${minLat},${maxLng} ${maxLat},${minLng} ${maxLat},${minLng} ${minLat}))`
+}
+
 async function getSentinelToken() {
   console.log('Authenticating with Sentinel Hub...')
   const response = await fetch('https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token', {
@@ -30,22 +62,32 @@ async function getSentinelToken() {
   return data.access_token
 }
 
-async function fetchSentinelScenes(token, bbox, datetime) {
-  const url = `https://sh.dataspace.copernicus.eu/api/v1/catalog/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-2' and OData.CSC.Intersects(area=geography'SRID=4326;POLYGON((${bbox}))') and ContentDate/Start gt ${datetime}T00:00:00.000Z and Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value lt 30)&$orderby=ContentDate/Start desc&$top=10`
+async function fetchSentinelScenes(token, polygonWkt, startDate) {
+  const url = `https://catalogue.dataspace.copernicus.eu/odata/v1/Products?$filter=Collection/Name eq 'SENTINEL-2' and OData.CSC.Intersects(area=geography'SRID=4326;${polygonWkt}') and ContentDate/Start gt ${startDate}T00:00:00.000Z and Attributes/OData.CSC.DoubleAttribute/any(att:att/Name eq 'cloudCover' and att/OData.CSC.DoubleAttribute/Value lt 30)&$orderby=ContentDate/Start desc&$top=5`
 
-  const response = await fetch(url, {
-    headers: { Authorization: `Bearer ${token}` },
-  })
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), 60000)
 
-  if (!response.ok) {
-    throw new Error(`Catalog API error: ${response.status}`)
+  try {
+    const response = await fetch(url, {
+      headers: { Authorization: `Bearer ${token}` },
+      signal: controller.signal,
+    })
+    clearTimeout(timeout)
+
+    if (!response.ok) {
+      const text = await response.text()
+      console.log(`  Catalog API error ${response.status}: ${text.substring(0, 200)}`)
+      return []
+    }
+
+    const data = await response.json()
+    return data.value || []
+  } catch (err) {
+    clearTimeout(timeout)
+    console.log(`  Fetch error: ${err.message}`)
+    return []
   }
-
-  return response.json()
-}
-
-function bboxString(lng, lat, delta = 0.05) {
-  return `${lng - delta},${lat - delta},${lng + delta},${lat + delta}`
 }
 
 async function sha256(message) {
@@ -74,7 +116,7 @@ const COVERAGE_AREAS = [
 ]
 
 async function main() {
-  console.log('=== Seed Satellite Captures (Real Sentinel Hub Data) ===')
+  console.log('=== Seed Satellite Captures (Copernicus OData) ===')
 
   if (!SENTINEL_CLIENT_ID || !SENTINEL_CLIENT_SECRET) {
     console.error('ERROR: SENTINEL_HUB_CLIENT_ID and SENTINEL_HUB_CLIENT_SECRET must be set in .env.local')
@@ -83,35 +125,47 @@ async function main() {
 
   const token = await getSentinelToken()
 
+  // Load polling units for nearest-PU lookup
+  console.log('\nLoading polling units...')
+  const { data: pollingUnits, error: puError } = await supabase.from('polling_units').select('id, lat, lng')
+  if (puError) {
+    console.error('Error loading polling units:', puError.message)
+    process.exit(1)
+  }
+  console.log(`  Loaded ${pollingUnits.length} polling units`)
+
   const allCaptures = []
 
   for (const area of COVERAGE_AREAS) {
     console.log(`\nFetching scenes for ${area.name} (${area.state})...`)
 
     try {
-      const bbox = bboxString(area.lng, area.lat)
-      const result = await fetchSentinelScenes(token, bbox, '2024-01-01')
-      const products = result.value || []
+      const polygon = toODataPolygon(area.lng, area.lat, 0.05)
+      const products = await fetchSentinelScenes(token, polygon, '2024-01-01')
       console.log(`  Found ${products.length} scenes`)
 
       for (const product of products) {
-        const date = product.ContentDate?.Start?.split('T')[0] || new Date().toISOString().split('T')[0]
+        const capturedAt = product.ContentDate?.Start || new Date().toISOString()
         const cloudCover = product.Attributes?.find(a => a.Name === 'cloudCover')?.Value || 0
-        const ndvi = product.Attributes?.find(a => a.Name === 'ndvi')?.Value || 0
-        const sha = await sha256(product.Id || `${area.state}-${date}`)
+        const sha = await sha256(product.Id || `${area.state}-${capturedAt}`)
+
+        // Find nearest polling unit
+        const nearestPU = findNearestPollingUnit(area.lat, area.lng, pollingUnits)
 
         allCaptures.push({
-          id: `sat-${area.state.toLowerCase()}-${date}-${sha.slice(0, 8)}`,
-          lat: area.lat,
-          lng: area.lng,
-          capture_date: date,
-          cloud_cover: cloudCover,
-          ndvi: ndvi,
-          image_url: `https://sh.dataspace.copernicus.eu/ogc/wms/${product.Id}`,
+          id: crypto.randomUUID(),
+          polling_unit_id: nearestPU?.id || null,
+          captured_at: capturedAt,
+          image_url: `https://browser.dataspace.copernicus.eu/?zoom=14&lat=${area.lat}&lng=${area.lng}`,
           sha256_hash: sha,
-          source: 'Sentinel-2',
+          is_flagged: false,
+          flag_reason: null,
+          ai_summary: `Sentinel-2 ${product.Name?.includes('L2A') ? 'L2A' : 'L1C'} capture for ${area.name}, ${area.state}. Cloud cover: ${cloudCover.toFixed(1)}%`,
         })
       }
+
+      // Rate limit: wait between requests
+      await new Promise(r => setTimeout(r, 3000))
     } catch (err) {
       console.error(`  Error: ${err.message}`)
     }
@@ -132,7 +186,7 @@ async function main() {
       }
     }
   } else {
-    console.log('No captures found. Check Sentinel Hub credentials.')
+    console.log('No captures found.')
   }
 
   console.log('Done!')
