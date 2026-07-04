@@ -4,7 +4,21 @@ import { useAuth } from "@/lib/auth"
 import Link from "next/link"
 import Navbar from "@/components/Navbar"
 import ReportForm from "@/components/ReportForm"
-import { Lock, LogIn, UserPlus, Siren, Loader2 } from "lucide-react"
+import OnboardingOverlay, { OnboardingStep } from "@/components/OnboardingOverlay"
+import { Lock, LogIn, UserPlus, Siren, Loader2, MapPin, FileText } from "lucide-react"
+
+const REPORT_ONBOARDING: OnboardingStep[] = [
+  {
+    title: "Find Your Polling Unit",
+    description: "Search by name or use the state/LGA/ward dropdowns to locate the exact polling unit where the incident occurred. The form will auto-fill the coordinates.",
+    icon: <MapPin className="w-5 h-5 text-emerald-600" />,
+  },
+  {
+    title: "Describe What Happened",
+    description: "Write a clear description of the incident — what you saw, when it happened, and who was involved. Be specific. Your report becomes part of the public record and helps protect voters.",
+    icon: <FileText className="w-5 h-5 text-emerald-600" />,
+  },
+]
 
 export default function ReportPage() {
   const { user, loading: authLoading } = useAuth()
@@ -49,6 +63,7 @@ export default function ReportPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <OnboardingOverlay pageKey="report" steps={REPORT_ONBOARDING} />
       <Navbar />
       <div className="max-w-lg mx-auto px-4 py-8">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">

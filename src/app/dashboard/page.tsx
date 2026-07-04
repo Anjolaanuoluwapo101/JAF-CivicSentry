@@ -17,7 +17,8 @@ import {
 import Navbar from "@/components/Navbar"
 import StatsSidebar from "@/components/StatsSidebar"
 import DetailPanel from "@/components/DetailPanel"
-import { Lock, ShieldAlert, LogIn, UserPlus, Loader2 } from "lucide-react"
+import OnboardingOverlay, { OnboardingStep } from "@/components/OnboardingOverlay"
+import { Lock, ShieldAlert, LogIn, UserPlus, Loader2, Map, BarChart3, MousePointerClick } from "lucide-react"
 
 const DashboardMap = dynamic(() => import("@/components/DashboardMap"), {
   ssr: false,
@@ -27,6 +28,24 @@ const DashboardMap = dynamic(() => import("@/components/DashboardMap"), {
     </div>
   ),
 })
+
+const DASHBOARD_ONBOARDING: OnboardingStep[] = [
+  {
+    title: "Interactive Risk Map",
+    description: "This map shows all polling units across Nigeria's 6 South West states. Each dot is color-coded by risk level — red for high risk, orange for medium, and green for low. Zoom in to explore specific areas.",
+    icon: <Map className="w-5 h-5 text-emerald-600" />,
+  },
+  {
+    title: "Stats Sidebar",
+    description: "The sidebar shows aggregate data — total polling units, incidents, fatalities, and risk distribution. Use the state filter and search in the toolbar to narrow down to a specific area.",
+    icon: <BarChart3 className="w-5 h-5 text-emerald-600" />,
+  },
+  {
+    title: "Click to Explore",
+    description: "Click any colored dot on the map to open the detail panel. You'll see conflict history, news signals, satellite imagery, election results, and an AI-powered risk narrative for that polling unit.",
+    icon: <MousePointerClick className="w-5 h-5 text-emerald-600" />,
+  },
+]
 
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth()
@@ -115,6 +134,7 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col h-screen">
+      <OnboardingOverlay pageKey="dashboard" steps={DASHBOARD_ONBOARDING} />
       <Navbar />
       <div className="flex flex-1 overflow-hidden">
         <StatsSidebar

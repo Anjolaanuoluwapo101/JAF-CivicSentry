@@ -4,7 +4,8 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import Navbar from "@/components/Navbar"
 import { fetchEvidenceArchive, fetchArchiveStats, EvidenceItem, ArchiveStats } from "@/lib/archive-queries"
-import { Shield, CheckCircle, AlertTriangle, Clock, Search, Filter, ChevronRight, Loader2, Archive, Image, FileText } from "lucide-react"
+import OnboardingOverlay, { OnboardingStep } from "@/components/OnboardingOverlay"
+import { Shield, CheckCircle, AlertTriangle, Clock, Search, Filter, ChevronRight, Loader2, Archive, Image, FileText, RefreshCw, Eye } from "lucide-react"
 
 const VERIFICATION_BADGES: Record<string, { bg: string; text: string; icon: typeof CheckCircle }> = {
   pending: { bg: "bg-yellow-50", text: "text-yellow-700", icon: Clock },
@@ -16,6 +17,24 @@ const EVIDENCE_ICONS: Record<string, typeof Image> = {
   satellite: Image,
   report: FileText,
 }
+
+const ARCHIVE_ONBOARDING: OnboardingStep[] = [
+  {
+    title: "Browse Evidence",
+    description: "This page lists all flagged satellite captures and citizen reports stored in the tamper-proof evidence archive. Each item has a SHA-256 hash for integrity verification.",
+    icon: <Eye className="w-5 h-5 text-emerald-600" />,
+  },
+  {
+    title: "Filter & Search",
+    description: "Use the type filter to view only satellite captures or citizen reports. The verification filter shows items that are pending, verified, or flagged as tampered.",
+    icon: <Filter className="w-5 h-5 text-emerald-600" />,
+  },
+  {
+    title: "Verify Integrity",
+    description: "Click any evidence item to view its full details and SHA-256 hash. Use the verify button to re-hash the source data and confirm nothing has been altered.",
+    icon: <RefreshCw className="w-5 h-5 text-emerald-600" />,
+  },
+]
 
 export default function ArchivePage() {
   const [items, setItems] = useState<EvidenceItem[]>([])
@@ -41,6 +60,7 @@ export default function ArchivePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <OnboardingOverlay pageKey="archive" steps={ARCHIVE_ONBOARDING} />
       <Navbar />
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header */}

@@ -4,12 +4,13 @@ import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth"
 import { useState, useEffect } from "react"
-import { LayoutDashboard, Siren, Archive, LogOut, Menu, X, ShieldAlert, LogIn, UserPlus } from "lucide-react"
+import { LayoutDashboard, Siren, Archive, LogOut, Menu, X, ShieldAlert, LogIn, UserPlus, Zap, User } from "lucide-react"
 
 const NAV_LINKS = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/report", label: "Report", icon: Siren },
   { href: "/archive", label: "Archive", icon: Archive },
+  { href: "/upgrade", label: "Upgrade", icon: Zap },
 ]
 
 export default function Navbar() {
@@ -66,6 +67,13 @@ export default function Navbar() {
             {user ? (
               <div className="flex items-center gap-3">
                 <span className="text-sm text-gray-500 hidden lg:inline">{user.email}</span>
+                <Link
+                  href="/account"
+                  className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-100 transition-all"
+                >
+                  <User className="w-4 h-4" />
+                  <span className="hidden sm:inline">Account</span>
+                </Link>
                 <button
                   onClick={handleSignOut}
                   className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-100 transition-all"
@@ -130,6 +138,14 @@ export default function Navbar() {
             {user ? (
               <>
                 <p className="text-xs text-gray-400 px-3">{user.email}</p>
+                <Link
+                  href="/account"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100 transition-all"
+                >
+                  <User className="w-4 h-4" />
+                  Account
+                </Link>
                 <button
                   onClick={() => { handleSignOut(); setMenuOpen(false) }}
                   className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100 transition-all"
