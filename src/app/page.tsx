@@ -1,193 +1,146 @@
-import { MapPin, Satellite, Newspaper, Bot, Zap, Vote, ShieldAlert, ArrowRight, Globe, Lock, Eye } from "lucide-react"
 import Link from "next/link"
 
 const FEATURES = [
   {
     title: "Historical Risk Mapping",
     description: "ACLED violence data from 2020-2025 matched to polling units by coordinate proximity. Risk scores computed from incident count and fatalities.",
-    icon: MapPin,
-    color: "text-red-400",
-    bg: "bg-red-500/10",
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+      </svg>
+    ),
   },
   {
     title: "Satellite Imagery",
     description: "Real Sentinel-2 captures with SHA-256 hashes for tamper-proof evidence. Every image timestamped and verified.",
-    icon: Satellite,
-    color: "text-blue-400",
-    bg: "bg-blue-500/10",
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
+      </svg>
+    ),
   },
   {
     title: "Live News Signals",
     description: "GDELT and NewsMCP feeds aggregated with sentiment analysis. Real-time news monitoring for each polling unit area.",
-    icon: Newspaper,
-    color: "text-amber-400",
-    bg: "bg-amber-500/10",
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 01-2.25 2.25M16.5 7.5V18a2.25 2.25 0 002.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 002.25 2.25h13.5" />
+      </svg>
+    ),
   },
   {
     title: "AI Risk Narratives",
     description: "Groq-powered analysis combining all data sources into actionable intelligence. Swappable AI provider via adapter pattern.",
-    icon: Bot,
-    color: "text-purple-400",
-    bg: "bg-purple-500/10",
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+      </svg>
+    ),
   },
   {
     title: "Power Infrastructure",
     description: "60,000+ outage records mapped to polling unit areas. Power disruption correlation with election day incidents.",
-    icon: Zap,
-    color: "text-yellow-400",
-    bg: "bg-yellow-500/10",
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+      </svg>
+    ),
   },
   {
     title: "Election History (1999-2023)",
     description: "Six presidential elections of data. Turnout trends, party performance, and margin analysis per polling unit.",
-    icon: Vote,
-    color: "text-emerald-400",
-    bg: "bg-emerald-500/10",
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 6.75V15m6-6v8.25m.503 4.498l4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 00-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0z" />
+      </svg>
+    ),
   },
   {
     title: "Citizen Incident Reports",
     description: "Authenticated voters can submit real-time incident reports. All reports hashed and archived for accountability.",
-    icon: ShieldAlert,
-    color: "text-rose-400",
-    bg: "bg-rose-500/10",
+    icon: (
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+      </svg>
+    ),
   },
-]
-
-const STATS = [
-  { value: "33,802", label: "Polling Units" },
-  { value: "6", label: "States Covered" },
-  { value: "1,501", label: "Health Facilities" },
-  { value: "25+", label: "Years of Data" },
 ]
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Hero */}
-      <section className="relative min-h-screen flex items-center overflow-hidden">
-        {/* Animated gradient background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-950 via-emerald-950/80 to-gray-950" />
-
-        {/* Floating orbs */}
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl animate-float" />
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "1s" }} />
-        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-cyan-500/5 rounded-full blur-3xl animate-float" style={{ animationDelay: "2s" }} />
-
-        {/* Grid overlay */}
-        <div
-          className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-            backgroundSize: '60px 60px',
-          }}
-        />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 w-full">
-          <nav className="flex items-center justify-between mb-20 sm:mb-32">
-            <Link href="/" className="flex items-center gap-2.5 group">
-              <div className="w-9 h-9 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-emerald-500/30 group-hover:shadow-emerald-500/50 transition-shadow">
-                <ShieldAlert className="w-5 h-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-white">CivicSentry AI</span>
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <header className="border-b border-gray-100">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
+              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+              </svg>
+            </div>
+            <span className="text-lg font-bold text-gray-900">CivicSentry AI</span>
+          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/login" className="text-sm text-gray-600 hover:text-gray-900">
+              Log in
             </Link>
-            <div className="flex items-center gap-3 sm:gap-4">
-              <Link
-                href="/login"
-                className="text-sm text-gray-300 hover:text-white transition-colors hidden sm:inline"
-              >
-                Login
-              </Link>
-              <Link
-                href="/signup"
-                className="bg-emerald-500 hover:bg-emerald-400 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-all hover:shadow-lg hover:shadow-emerald-500/25 hover:-translate-y-0.5"
-              >
-                Get Started Free
-              </Link>
-            </div>
-          </nav>
-
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5 mb-6 animate-fade-in-up">
-              <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
-              <span className="text-xs font-medium text-emerald-300">Live • 6 South West States</span>
-            </div>
-            <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight leading-[1.1] text-white animate-fade-in-up animate-delay-100">
-              Know Before{" "}
-              <span className="gradient-text">
-                You Go Vote
-              </span>
-            </h1>
-            <p className="mt-6 text-lg sm:text-xl text-gray-300 max-w-2xl leading-relaxed animate-fade-in-up animate-delay-200">
-              When citizens lose access to polling units because of violence or
-              voter suppression, the world goes dark. CivicSentry AI illuminates
-              election safety using real satellite data, historical violence records,
-              and AI-powered risk narratives for every Nigerian polling unit.
-            </p>
-            <div className="mt-10 flex flex-wrap gap-4 animate-fade-in-up animate-delay-300">
-              <Link
-                href="/dashboard"
-                className="group bg-emerald-500 hover:bg-emerald-400 text-white font-bold px-8 py-3.5 rounded-xl text-lg transition-all hover:shadow-xl hover:shadow-emerald-500/30 hover:-translate-y-0.5 flex items-center gap-2"
-              >
-                View Dashboard
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
-              <Link
-                href="/archive"
-                className="border border-gray-600 text-gray-300 hover:bg-white/10 hover:text-white font-semibold px-8 py-3.5 rounded-xl text-lg transition-all"
-              >
-                Evidence Archive
-              </Link>
-            </div>
-          </div>
-
-          {/* Stats bar */}
-          <div className="mt-20 animate-fade-in-up animate-delay-400">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl">
-              {STATS.map((stat) => (
-                <div key={stat.label} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl p-4 text-center">
-                  <p className="text-2xl font-bold text-white">{stat.value}</p>
-                  <p className="text-xs text-gray-400 mt-1">{stat.label}</p>
-                </div>
-              ))}
-            </div>
+            <Link
+              href="/signup"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+            >
+              Sign up free
+            </Link>
           </div>
         </div>
+      </header>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
-          <div className="w-6 h-10 border-2 border-white/30 rounded-full flex items-start justify-center p-1.5">
-            <div className="w-1.5 h-3 bg-white/50 rounded-full animate-pulse" />
+      {/* Hero */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
+        <div className="max-w-3xl">
+          <div className="inline-flex items-center gap-2 text-emerald-700 text-sm font-medium mb-4">
+            <span className="w-2 h-2 bg-emerald-500 rounded-full" />
+            Live in 6 South West States
+          </div>
+          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 leading-tight">
+            Know before you go vote
+          </h1>
+          <p className="mt-5 text-lg text-gray-600 leading-relaxed max-w-2xl">
+            Real-time election safety intelligence for 33,802 polling units across
+            Lagos, Ogun, Oyo, Osun, Ondo, and Ekiti. Satellite imagery, violence
+            data, and AI-powered risk narratives — all in one place.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link
+              href="/dashboard"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-6 py-3 rounded-lg transition-colors"
+            >
+              View Dashboard
+            </Link>
+            <Link
+              href="/archive"
+              className="border border-gray-300 hover:border-gray-400 text-gray-700 font-medium px-6 py-3 rounded-lg transition-colors"
+            >
+              Evidence Archive
+            </Link>
           </div>
         </div>
       </section>
 
-      {/* How it works */}
-      <section className="bg-gray-950 py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-emerald-950/20 to-transparent" />
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-4 py-1.5 mb-4">
-              <Lock className="w-3.5 h-3.5 text-emerald-400" />
-              <span className="text-xs font-medium text-emerald-300">Transparent & Verifiable</span>
-            </div>
-            <h2 className="text-4xl font-bold text-white mb-4">
-              How CivicSentry Works
-            </h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              From raw data to actionable intelligence in four steps.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      {/* Stats */}
+      <section className="border-y border-gray-100 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
             {[
-              { step: "01", title: "Aggregate", desc: "We pull data from 26 real sources — ACLED, Sentinel-2, GDELT, INEC, and more.", icon: Globe },
-              { step: "02", title: "Analyze", desc: "AI combines all signals into a single risk score and narrative for each polling unit.", icon: Bot },
-              { step: "03", title: "Verify", desc: "Every piece of evidence is SHA-256 hashed for tamper-proof chain of custody.", icon: Eye },
-            ].map((item) => (
-              <div key={item.step} className="group relative bg-gray-900/50 border border-gray-800 rounded-2xl p-8 hover:border-emerald-500/30 transition-all">
-                <div className="text-6xl font-extrabold text-gray-800 absolute top-4 right-6">{item.step}</div>
-                <item.icon className="w-8 h-8 text-emerald-400 mb-4" />
-                <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
-                <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
+              { value: "33,802", label: "Polling Units" },
+              { value: "6", label: "States Covered" },
+              { value: "1,501", label: "Health Facilities" },
+              { value: "25+", label: "Years of Data" },
+            ].map((stat) => (
+              <div key={stat.label} className="text-center">
+                <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+                <p className="text-sm text-gray-500 mt-1">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -195,84 +148,89 @@ export default function LandingPage() {
       </section>
 
       {/* Features */}
-      <section className="flex-1 bg-gray-950 py-24 relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">
-              Multi-Signal Election Intelligence
-            </h2>
-            <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-              Seven data layers converge into a single intelligence dashboard.
-              Everything you need to assess polling unit safety.
-            </p>
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold text-gray-900">
+            Multi-signal election intelligence
+          </h2>
+          <p className="mt-3 text-gray-600 max-w-2xl mx-auto">
+            Seven data layers converge into a single intelligence dashboard.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {FEATURES.map((feature) => (
+            <div key={feature.title} className="border border-gray-200 rounded-xl p-6">
+              <div className="text-emerald-600 mb-3">{feature.icon}</div>
+              <h3 className="font-semibold text-gray-900 mb-2">{feature.title}</h3>
+              <p className="text-sm text-gray-600 leading-relaxed">{feature.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* How it works */}
+      <section className="border-y border-gray-100 bg-gray-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900">How it works</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {FEATURES.map((feature, i) => {
-              const Icon = feature.icon
-              return (
-                <div
-                  key={feature.title}
-                  className={`group bg-gray-900/50 border border-gray-800 rounded-2xl p-6 hover:bg-gray-900 hover:border-emerald-500/30 transition-all duration-300 hover:-translate-y-1 animate-fade-in-up`}
-                  style={{ animationDelay: `${i * 100}ms` }}
-                >
-                  <div className={`w-11 h-11 ${feature.bg} rounded-xl flex items-center justify-center mb-4`}>
-                    <Icon className={`w-5 h-5 ${feature.color}`} />
-                  </div>
-                  <h3 className="font-semibold text-white mb-2">{feature.title}</h3>
-                  <p className="text-sm text-gray-400 leading-relaxed">{feature.description}</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-4xl mx-auto">
+            {[
+              { step: "1", title: "Aggregate", desc: "We pull data from 26 real sources — ACLED, Sentinel-2, GDELT, INEC, and more." },
+              { step: "2", title: "Analyze", desc: "AI combines all signals into a single risk score and narrative for each polling unit." },
+              { step: "3", title: "Verify", desc: "Every piece of evidence is SHA-256 hashed for tamper-proof chain of custody." },
+            ].map((item) => (
+              <div key={item.step} className="text-center">
+                <div className="w-10 h-10 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-sm font-bold mx-auto mb-4">
+                  {item.step}
                 </div>
-              )
-            })}
+                <h3 className="font-semibold text-gray-900 mb-2">{item.title}</h3>
+                <p className="text-sm text-gray-600">{item.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="bg-gradient-to-b from-gray-950 to-gray-900 py-20 relative overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-emerald-500/10 rounded-full blur-3xl" />
-        </div>
-        <div className="relative max-w-3xl mx-auto px-4 text-center">
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
-            Every Vote Deserves Safety
-          </h2>
-          <p className="text-gray-400 text-lg mb-8 max-w-xl mx-auto">
-            Join thousands of Nigerians using data-driven intelligence to protect
-            polling units and hold perpetrators accountable.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link
-              href="/signup"
-              className="bg-emerald-500 hover:bg-emerald-400 text-white font-bold px-8 py-3.5 rounded-xl text-lg transition-all hover:shadow-xl hover:shadow-emerald-500/30 hover:-translate-y-0.5"
-            >
-              Create Free Account
-            </Link>
-            <Link
-              href="/dashboard"
-              className="border border-gray-600 text-gray-300 hover:bg-white/10 hover:text-white font-semibold px-8 py-3.5 rounded-xl text-lg transition-all"
-            >
-              Explore Dashboard
-            </Link>
-          </div>
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          Every vote deserves safety
+        </h2>
+        <p className="text-gray-600 mb-8 max-w-xl mx-auto">
+          Join thousands of Nigerians using data-driven intelligence to protect
+          polling units and hold perpetrators accountable.
+        </p>
+        <div className="flex flex-wrap justify-center gap-3">
+          <Link
+            href="/signup"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-6 py-3 rounded-lg transition-colors"
+          >
+            Create free account
+          </Link>
+          <Link
+            href="/dashboard"
+            className="border border-gray-300 hover:border-gray-400 text-gray-700 font-medium px-6 py-3 rounded-lg transition-colors"
+          >
+            Explore dashboard
+          </Link>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="bg-black text-gray-500 py-10 border-t border-gray-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <footer className="border-t border-gray-100">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 text-emerald-500" />
-              <span className="text-sm text-gray-400">CivicSentry AI</span>
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <div className="w-5 h-5 bg-emerald-600 rounded flex items-center justify-center">
+                <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                </svg>
+              </div>
+              CivicSentry AI
             </div>
-            <p className="text-xs text-center sm:text-left">
-              Built for the 2027 Nigerian Elections • Data:{" "}
-              <a href="https://acleddata.com" className="underline hover:text-gray-300">ACLED</a>,{" "}
-              <a href="https://www.inecnigeria.org" className="underline hover:text-gray-300">INEC</a>,{" "}
-              <a href="https://dataspace.copernicus.eu" className="underline hover:text-gray-300">Copernicus</a>,{" "}
-              <a href="https://www.gdeltproject.org" className="underline hover:text-gray-300">GDELT</a>,{" "}
-              <a href="https://grid3.org" className="underline hover:text-gray-300">GRID3</a>,{" "}
-              <a href="https://www.worldpop.org" className="underline hover:text-gray-300">WorldPop</a>
+            <p className="text-xs text-gray-400">
+              Built for the 2027 Nigerian Elections
             </p>
           </div>
         </div>

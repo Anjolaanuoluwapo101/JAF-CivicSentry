@@ -44,7 +44,7 @@ export const metadata: Metadata = {
       "Real-time election safety intelligence for 33,802 polling units across Nigeria's 6 South West states. Satellite imagery, violence data, and AI-powered risk narratives.",
     images: [
       {
-        url: "/og-image.png",
+        url: "/og-image.svg",
         width: 1200,
         height: 630,
         alt: "CivicSentry AI Dashboard",
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     title: "CivicSentry AI — Know Before You Go Vote",
     description:
       "Real-time election safety intelligence for 33,802 polling units across Nigeria's 6 South West states.",
-    images: ["/og-image.png"],
+    images: ["/og-image.svg"],
   },
   robots: {
     index: true,
@@ -70,9 +70,7 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon-16x16.png",
-    apple: "/apple-touch-icon.png",
+    icon: "/favicon.svg",
   },
 };
 
