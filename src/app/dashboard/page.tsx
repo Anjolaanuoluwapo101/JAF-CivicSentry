@@ -17,12 +17,13 @@ import {
 import Navbar from "@/components/Navbar"
 import StatsSidebar from "@/components/StatsSidebar"
 import DetailPanel from "@/components/DetailPanel"
+import { Lock, ShieldAlert, LogIn, UserPlus, Loader2 } from "lucide-react"
 
 const DashboardMap = dynamic(() => import("@/components/DashboardMap"), {
   ssr: false,
   loading: () => (
     <div className="flex-1 bg-gray-100 flex items-center justify-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500" />
+      <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
     </div>
   ),
 })
@@ -75,33 +76,35 @@ export default function DashboardPage() {
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500" />
+        <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
       </div>
     )
   }
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="text-center max-w-md">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
+          <div className="w-20 h-20 bg-red-50 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-red-100">
+            <Lock className="w-10 h-10 text-red-400" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Authentication Required</h2>
-          <p className="text-gray-500 mb-6">You must be logged in to access the dashboard.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Access Restricted</h2>
+          <p className="text-gray-500 mb-8 max-w-sm mx-auto">
+            You need to sign in to access the election safety dashboard. Citizen reports and risk data are available to authenticated users only.
+          </p>
           <div className="flex gap-3 justify-center">
             <Link
               href="/login"
-              className="bg-emerald-500 hover:bg-emerald-400 text-white font-semibold px-6 py-2.5 rounded-lg text-sm transition-colors"
+              className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-all hover:shadow-lg hover:shadow-emerald-500/25"
             >
+              <LogIn className="w-4 h-4" />
               Sign In
             </Link>
             <Link
               href="/signup"
-              className="border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold px-6 py-2.5 rounded-lg text-sm transition-colors"
+              className="flex items-center gap-2 border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold px-6 py-2.5 rounded-xl text-sm transition-all"
             >
+              <UserPlus className="w-4 h-4" />
               Sign Up
             </Link>
           </div>
@@ -127,8 +130,8 @@ export default function DashboardPage() {
           {loading ? (
             <div className="flex-1 bg-gray-100 flex items-center justify-center h-full">
               <div className="text-center">
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500 mx-auto mb-4" />
-                <p className="text-gray-500">
+                <Loader2 className="w-10 h-10 text-emerald-500 animate-spin mx-auto mb-4" />
+                <p className="text-sm text-gray-500">
                   Loading {selectedState === "ALL" ? "all states" : selectedState}...
                 </p>
               </div>
@@ -148,7 +151,6 @@ export default function DashboardPage() {
             />
           )}
 
-          {/* Detail bottom sheet — scoped to map area */}
           {selectedPU && (
             <DetailPanel pu={selectedPU} onClose={() => setSelectedPU(null)} />
           )}

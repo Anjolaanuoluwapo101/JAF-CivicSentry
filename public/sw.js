@@ -1,56 +1,51 @@
-const CACHE_NAME = "civicsentry-tiles-v1";
+const TILE_CACHE = "civicsentry-tiles-v2";
 
-self.addEventListener("install", (event) => {
+self.addEventListener("install", (e) => {
+  console.log("[SW] install");
   self.skipWaiting();
 });
 
-self.addEventListener("activate", (event) => {
-  event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys
-          .filter((key) => key !== CACHE_NAME)
-          .map((key) => caches.delete(key))
+self.addEventListener("activate", (e) => {
+  console.log("[SW] activate");
+  e.waitUntil(
+    caches
+      .keys()
+      .then((k) =>
+        Promise.all(k.filter((k) => k !== TILE_CACHE).map((k) => caches.delete(k)))
       )
-    )
+      .then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
-self.addEventListener("fetch", (event) => {
-  const url = new URL(event.request.url);
+self.addEventListener("fetch", (e) => {
+  const u = new URL(e.request.url);
 
   // Only cache OSM tiles
-  if (
-    url.hostname.includes("tile.openstreetmap.org") ||
-    url.hostname.includes("tileernetstreetmap.org")
-  ) {
-    event.respondWith(
-      caches.open(CACHE_NAME).then((cache) =>
-        cache.match(event.request).then((cached) => {
-          if (cached) return cached;
+  if (!u.hostname.endsWith("tile.openstreetmap.org")) return;
 
-          return fetch(event.request)
-            .then((response) => {
-              // Only cache successful responses
-              if (response.ok) {
-                cache.put(event.request, response.clone());
-              }
-              return response;
-            })
-            .catch(() => {
-              // Return a transparent pixel for failed tile requests
-              return new Response(
-                "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12NgAAIABQABNjN9GQAAAABJRU5ErkJggg==",
-                { headers: { "Content-Type": "image/png" } }
-              );
-            });
-        })
-      )
-    );
-    return;
-  }
+  e.respondWith(
+    caches.open(TILE_CACHE).then(async (cache) => {
+      const hit = await cache.match(e.request);
+      if (hit) {
+        console.log("[SW] cache HIT", u.pathname);
+        return hit;
+      }
 
-  // Everything else: network only
-  event.respondWith(fetch(event.request));
+      try {
+        const res = await fetch(e.request);
+        if (res.ok) {
+          // clone before putting — body can only be consumed once
+          await cache.put(e.request, res.clone());
+          console.log("[SW] cached", u.pathname);
+        }
+        return res;
+      } catch (err) {
+        console.warn("[SW] fetch failed, returning blank tile", err);
+        return new Response(
+          "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQI12NgAAIABQABNjN9GQAAAABJRU5ErkJggg==",
+          { headers: { "Content-Type": "image/png" } }
+        );
+      }
+    })
+  );
 });

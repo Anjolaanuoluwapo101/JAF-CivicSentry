@@ -1,4 +1,6 @@
+import { useState, useRef, useCallback, useEffect } from "react"
 import { PollingUnit, AcledIncident, DashboardStats } from "@/lib/queries"
+import { BarChart3, X, AlertTriangle, MapPin, Siren, Crosshair, Clock, Skull, BarChartHorizontal } from "lucide-react"
 
 interface StatsSidebarProps {
   stats: DashboardStats
@@ -26,6 +28,33 @@ export default function StatsSidebar({
   open,
   onToggle,
 }: StatsSidebarProps) {
+  const [pos, setPos] = useState({ x: 12, y: 128 })
+  const dragging = useRef(false)
+  const start = useRef({ x: 0, y: 0, px: 0, py: 0 })
+
+  const onPointerDown = useCallback((e: React.PointerEvent) => {
+    dragging.current = false
+    start.current = { x: e.clientX, y: e.clientY, px: pos.x, py: pos.y }
+    const onMove = (ev: PointerEvent) => {
+      dragging.current = true
+      setPos({
+        x: start.current.px + (ev.clientX - start.current.x),
+        y: start.current.py + (ev.clientY - start.current.y),
+      })
+    }
+    const onUp = () => {
+      window.removeEventListener("pointermove", onMove)
+      window.removeEventListener("pointerup", onUp)
+    }
+    window.addEventListener("pointermove", onMove)
+    window.addEventListener("pointerup", onUp)
+    e.currentTarget.setPointerCapture(e.pointerId)
+  }, [pos])
+
+  const onClick = useCallback((e: React.MouseEvent) => {
+    if (!dragging.current) onToggle()
+  }, [onToggle])
+
   const stateBreakdown = Object.entries(
     pollingUnits.reduce((acc, pu) => {
       acc[pu.state] = (acc[pu.state] || 0) + 1
@@ -56,13 +85,13 @@ export default function StatsSidebar({
       {/* Mobile toggle button - only when closed */}
       {!open && (
         <button
-          onClick={onToggle}
-          className="md:hidden fixed top-32 left-3 z-[1001] bg-white rounded-xl shadow-lg border border-gray-200 p-3.5 hover:bg-gray-50 transition-colors"
+          onPointerDown={onPointerDown}
+          onClick={onClick}
+          className="md:hidden fixed z-[1001] bg-white rounded-xl shadow-lg border border-gray-200 p-3.5 hover:bg-gray-50 transition-colors touch-none select-none"
+          style={{ left: pos.x, top: pos.y }}
           aria-label="Open stats"
         >
-          <svg className="w-6 h-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-          </svg>
+          <BarChart3 className="w-6 h-6 text-emerald-600" />
         </button>
       )}
 
@@ -99,9 +128,7 @@ export default function StatsSidebar({
               className="md:hidden p-2 rounded-lg hover:bg-gray-200 transition-colors"
               aria-label="Close stats"
             >
-              <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              <X className="w-5 h-5 text-gray-500" />
             </button>
           )}
         </div>

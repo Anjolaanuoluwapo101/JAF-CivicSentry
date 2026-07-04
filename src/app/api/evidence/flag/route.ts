@@ -5,11 +5,18 @@ import { cookies } from "next/headers"
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { polling_unit_id, description } = body
+    const { evidence_type, evidence_id, polling_unit_id, sha256_hash, flag_reason } = body
 
-    if (!polling_unit_id || !description?.trim()) {
+    if (!evidence_type || !evidence_id || !sha256_hash) {
       return NextResponse.json(
-        { error: "Missing polling_unit_id or description" },
+        { error: "Missing evidence_type, evidence_id, or sha256_hash" },
+        { status: 400 }
+      )
+    }
+
+    if (!["satellite", "report"].includes(evidence_type)) {
+      return NextResponse.json(
+        { error: "evidence_type must be 'satellite' or 'report'" },
         { status: 400 }
       )
     }
@@ -35,25 +42,43 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+    // Check if already flagged
+    const { data: existing } = await supabase
+      .from("evidence_archive")
+      .select("id")
+      .eq("evidence_type", evidence_type)
+      .eq("evidence_id", evidence_id)
+      .single()
+
+    if (existing) {
+      return NextResponse.json(
+        { error: "Evidence already flagged for archive" },
+        { status: 409 }
+      )
+    }
+
     const { data, error } = await supabase
-      .from("incident_reports")
+      .from("evidence_archive")
       .insert({
-        polling_unit_id,
-        description: description.trim(),
-        reporter_id: user.id,
-        status: "pending",
+        evidence_type,
+        evidence_id,
+        polling_unit_id: polling_unit_id || null,
+        sha256_hash,
+        flagged_by: user.id,
+        flag_reason: flag_reason || null,
+        verification_status: "pending",
       })
       .select("id, created_at")
       .single()
 
     if (error) {
-      console.error("Report insert error:", error.message)
+      console.error("Flag evidence error:", error.message)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
     return NextResponse.json({ id: data.id, created_at: data.created_at })
   } catch (err: any) {
-    console.error("Report API error:", err)
+    console.error("Flag evidence API error:", err)
     return NextResponse.json({ error: err.message }, { status: 500 })
   }
 }

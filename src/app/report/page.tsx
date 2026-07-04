@@ -4,6 +4,7 @@ import { useAuth } from "@/lib/auth"
 import Link from "next/link"
 import Navbar from "@/components/Navbar"
 import ReportForm from "@/components/ReportForm"
+import { Lock, LogIn, UserPlus, Siren, Loader2 } from "lucide-react"
 
 export default function ReportPage() {
   const { user, loading: authLoading } = useAuth()
@@ -11,33 +12,33 @@ export default function ReportPage() {
   if (authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500" />
+        <Loader2 className="w-8 h-8 text-emerald-500 animate-spin" />
       </div>
     )
   }
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="text-center max-w-md">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-8 h-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
+          <div className="w-20 h-20 bg-red-50 rounded-3xl flex items-center justify-center mx-auto mb-6 border border-red-100">
+            <Lock className="w-10 h-10 text-red-400" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Authentication Required</h2>
-          <p className="text-gray-500 mb-6">You must be logged in to submit an incident report.</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Authentication Required</h2>
+          <p className="text-gray-500 mb-8">You must be logged in to submit an incident report.</p>
           <div className="flex gap-3 justify-center">
             <Link
               href="/login"
-              className="bg-emerald-500 hover:bg-emerald-400 text-white font-semibold px-6 py-2.5 rounded-lg text-sm transition-colors"
+              className="flex items-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-white font-semibold px-6 py-2.5 rounded-xl text-sm transition-all hover:shadow-lg hover:shadow-emerald-500/25"
             >
+              <LogIn className="w-4 h-4" />
               Sign In
             </Link>
             <Link
               href="/signup"
-              className="border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold px-6 py-2.5 rounded-lg text-sm transition-colors"
+              className="flex items-center gap-2 border border-gray-300 hover:bg-gray-50 text-gray-700 font-semibold px-6 py-2.5 rounded-xl text-sm transition-all"
             >
+              <UserPlus className="w-4 h-4" />
               Sign Up
             </Link>
           </div>
@@ -50,11 +51,16 @@ export default function ReportPage() {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <div className="max-w-lg mx-auto px-4 py-8">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-          <h1 className="text-lg font-bold text-gray-900 mb-1">Report an Incident</h1>
-          <p className="text-sm text-gray-500 mb-6">
-            Help keep your community safe by reporting incidents at polling units.
-          </p>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
+              <Siren className="w-5 h-5 text-emerald-600" />
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-gray-900">Report an Incident</h1>
+              <p className="text-sm text-gray-500">Help keep your community safe</p>
+            </div>
+          </div>
           <ReportForm />
         </div>
       </div>

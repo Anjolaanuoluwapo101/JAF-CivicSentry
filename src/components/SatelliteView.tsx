@@ -2,10 +2,16 @@
 
 import { useEffect, useState } from "react"
 import { fetchSatelliteForPU, SatelliteDetail } from "@/lib/detail-queries"
+import { useAuth } from "@/lib/auth"
+import { Flag, Check, Loader2 } from "lucide-react"
 
 export default function SatelliteView({ pollingUnitId }: { pollingUnitId: string }) {
+  const { user } = useAuth()
   const [capture, setCapture] = useState<SatelliteDetail | null>(null)
   const [loading, setLoading] = useState(true)
+  const [flagging, setFlagging] = useState(false)
+  const [flagged, setFlagged] = useState(false)
+  const [flagReason, setFlagReason] = useState("")
 
   useEffect(() => {
     setLoading(true)
@@ -14,6 +20,29 @@ export default function SatelliteView({ pollingUnitId }: { pollingUnitId: string
       setLoading(false)
     })
   }, [pollingUnitId])
+
+  const handleFlag = async () => {
+    if (!capture || !capture.sha256_hash || !user) return
+    setFlagging(true)
+    try {
+      const res = await fetch("/api/evidence/flag", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          evidence_type: "satellite",
+          evidence_id: capture.id,
+          polling_unit_id: pollingUnitId,
+          sha256_hash: capture.sha256_hash,
+          flag_reason: flagReason || "Flagged from satellite view",
+        }),
+      })
+      if (res.ok) setFlagged(true)
+    } catch (err) {
+      console.error("Flag failed:", err)
+    } finally {
+      setFlagging(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -86,6 +115,36 @@ export default function SatelliteView({ pollingUnitId }: { pollingUnitId: string
           <p className="text-[10px] text-gray-600 font-mono break-all leading-relaxed">
             {capture.sha256_hash}
           </p>
+        </div>
+      )}
+
+      {/* Flag for Archive */}
+      {user && capture.sha256_hash && (
+        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-3">
+          {flagged ? (
+            <div className="flex items-center gap-2 text-emerald-700">
+              <Check className="w-4 h-4" />
+              <span className="text-xs font-medium">Added to Evidence Archive</span>
+            </div>
+          ) : (
+            <>
+              <input
+                type="text"
+                value={flagReason}
+                onChange={(e) => setFlagReason(e.target.value)}
+                placeholder="Reason for flagging (optional)"
+                className="w-full text-xs border border-emerald-200 rounded-lg px-3 py-1.5 mb-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+              />
+              <button
+                onClick={handleFlag}
+                disabled={flagging}
+                className="flex items-center gap-2 text-xs font-medium text-emerald-700 hover:text-emerald-800 disabled:opacity-50"
+              >
+                {flagging ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Flag className="w-3.5 h-3.5" />}
+                {flagging ? "Flagging..." : "Flag for Evidence Archive"}
+              </button>
+            </>
+          )}
         </div>
       )}
 

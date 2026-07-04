@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState, useMemo, useCallback, useRef, forwardRef, useImperativeHandle } from "react"
+import { useEffect, useState, useMemo, useCallback, useRef } from "react"
 import {
   MapContainer,
   TileLayer,
@@ -25,9 +25,9 @@ const RISK_COLORS: Record<string, string> = {
 }
 
 const RISK_RADIUS: Record<string, number> = {
-  high: 9,
-  medium: 8,
-  low: 7,
+  high: 10,
+  medium: 9,
+  low: 8,
 }
 
 const SW_CENTER: [number, number] = [7.5, 4.0]
@@ -269,7 +269,7 @@ export default function DashboardMap({
       />
       <MapContainer
         center={SW_CENTER}
-        zoom={7}
+        zoom={16}
         className="flex-1 h-full"
         zoomControl={false}
         maxBounds={SW_BOUNDS}
@@ -295,32 +295,19 @@ export default function DashboardMap({
           const capture = captureMap.get(pu.id)
 
           return (
-            <React.Fragment key={pu.id}>
-              {/* Invisible hit area — larger radius for easy tapping */}
-              <CircleMarker
-                center={[pu.lat, pu.lng]}
-                radius={14}
-                fillColor="transparent"
-                color="transparent"
-                weight={0}
-                fillOpacity={0}
-                eventHandlers={{
-                  click: () => onSelectPU?.(pu),
-                }}
-              />
-              {/* Visible marker */}
-              <CircleMarker
-                center={[pu.lat, pu.lng]}
-                radius={getMarkerRadius(pu)}
-                fillColor={getMarkerColor(pu)}
-                color={getMarkerColor(pu)}
-                weight={1}
-                opacity={0.85}
-                fillOpacity={0.75}
-                eventHandlers={{
-                  click: () => onSelectPU?.(pu),
-                }}
-              >
+            <CircleMarker
+              key={pu.id}
+              center={[pu.lat, pu.lng]}
+              radius={getMarkerRadius(pu)}
+              fillColor={getMarkerColor(pu)}
+              color={getMarkerColor(pu)}
+              weight={2}
+              opacity={0.9}
+              fillOpacity={0.8}
+              eventHandlers={{
+                click: () => onSelectPU?.(pu),
+              }}
+            >
               <Popup>
                 <div className="min-w-[200px]">
                   <h3 className="font-semibold text-gray-900 text-sm">
@@ -395,7 +382,6 @@ export default function DashboardMap({
                 </div>
               </Popup>
             </CircleMarker>
-            </React.Fragment>
           )
         })}
       </MapContainer>

@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
+import { useAuth } from "@/lib/auth"
+import { Flag, Check, Loader2 } from "lucide-react"
 
 interface Report {
   id: string
@@ -12,8 +14,11 @@ interface Report {
 }
 
 export default function CitizenReports({ pollingUnitId }: { pollingUnitId: string }) {
+  const { user } = useAuth()
   const [reports, setReports] = useState<Report[]>([])
   const [loading, setLoading] = useState(true)
+  const [flaggingId, setFlaggingId] = useState<string | null>(null)
+  const [flaggedIds, setFlaggedIds] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     setLoading(true)
@@ -28,6 +33,39 @@ export default function CitizenReports({ pollingUnitId }: { pollingUnitId: strin
         setLoading(false)
       })
   }, [pollingUnitId])
+
+  const handleFlag = async (report: Report) => {
+    if (!user) return
+    setFlaggingId(report.id)
+
+    // Generate a simple hash of the report content for integrity
+    const encoder = new TextEncoder()
+    const data = encoder.encode(`${report.id}:${report.description}:${report.created_at}`)
+    const hashBuffer = await crypto.subtle.digest("SHA-256", data)
+    const hashArray = Array.from(new Uint8Array(hashBuffer))
+    const sha256Hash = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("")
+
+    try {
+      const res = await fetch("/api/evidence/flag", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          evidence_type: "report",
+          evidence_id: report.id,
+          polling_unit_id: pollingUnitId,
+          sha256_hash: sha256Hash,
+          flag_reason: "Flagged from citizen reports view",
+        }),
+      })
+      if (res.ok) {
+        setFlaggedIds((prev) => new Set(prev).add(report.id))
+      }
+    } catch (err) {
+      console.error("Flag failed:", err)
+    } finally {
+      setFlaggingId(null)
+    }
+  }
 
   if (loading) {
     return (
@@ -66,15 +104,38 @@ export default function CitizenReports({ pollingUnitId }: { pollingUnitId: strin
               {r.status}
             </span>
           </div>
-          <p className="text-[10px] text-gray-400 mt-2">
-            {new Date(r.created_at).toLocaleDateString("en-NG", {
-              year: "numeric",
-              month: "short",
-              day: "numeric",
-              hour: "2-digit",
-              minute: "2-digit",
-            })}
-          </p>
+          <div className="flex items-center justify-between mt-2">
+            <p className="text-[10px] text-gray-400">
+              {new Date(r.created_at).toLocaleDateString("en-NG", {
+                year: "numeric",
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </p>
+            {user && (
+              flaggedIds.has(r.id) ? (
+                <span className="flex items-center gap-1 text-[10px] text-emerald-600 font-medium">
+                  <Check className="w-3 h-3" />
+                  Archived
+                </span>
+              ) : (
+                <button
+                  onClick={() => handleFlag(r)}
+                  disabled={flaggingId === r.id}
+                  className="flex items-center gap-1 text-[10px] text-gray-400 hover:text-emerald-600 disabled:opacity-50 transition-colors"
+                >
+                  {flaggingId === r.id ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : (
+                    <Flag className="w-3 h-3" />
+                  )}
+                  Archive
+                </button>
+              )
+            )}
+          </div>
         </div>
       ))}
     </div>
